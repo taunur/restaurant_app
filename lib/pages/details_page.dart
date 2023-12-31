@@ -133,7 +133,7 @@ class DetailsPage extends StatelessWidget {
           child: Image.network(
             ImageHelper.getImageUrl(
               imageUrl,
-              ImageResolution.small,
+              ImageResolution.medium,
             ),
             fit: BoxFit.cover,
             height: 180,

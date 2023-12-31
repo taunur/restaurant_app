@@ -59,7 +59,7 @@ void main() {
   test('should change state into error', () async {
     // arrange
     when(mockConnectionServices.isInternetAvailable())
-        .thenAnswer((_) async => true);
+        .thenAnswer((_) async => false);
     when(mockRestaurantServices.getAllRestaurants()).thenThrow(Error());
     // act
     await restaurantProvider.getRestaurant();
