@@ -5,6 +5,7 @@ import 'package:restaurant_app/common/app_routes.dart';
 import 'package:restaurant_app/data/api/restaurant_services.dart';
 import 'package:restaurant_app/data/models/restaurant_model.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:http/http.dart' as http;
 
 final selectNotificationSubject = BehaviorSubject<String>();
 
@@ -43,7 +44,8 @@ class NotificationHelper {
     var channelDescription = "restaurant news channel";
 
     /// get restaurant List
-    var restaurantList = await RestaurantServices().getAllRestaurants();
+    var restaurantList =
+        await RestaurantServices(http.Client()).getAllRestaurants();
 
     /// get random breed item from list
     var randomIndex = Random().nextInt(restaurantList.length);

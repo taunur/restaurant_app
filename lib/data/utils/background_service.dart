@@ -7,6 +7,7 @@ import 'package:restaurant_app/data/models/restaurant_model.dart';
 import 'package:restaurant_app/main.dart';
 
 import 'notification_helper.dart';
+import 'package:http/http.dart' as http;
 
 final ReceivePort port = ReceivePort();
 
@@ -35,7 +36,8 @@ class BackgroundService {
     final NotificationHelper notificationHelper = NotificationHelper();
 
     // Fetch the list of restaurants
-    var restaurantList = await RestaurantServices().getAllRestaurants();
+    var restaurantList =
+        await RestaurantServices(http.Client()).getAllRestaurants();
 
     // Create a SearchResult object
     var result = SearchResult(

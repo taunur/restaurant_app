@@ -28,16 +28,6 @@ class RestaurantProvider extends ChangeNotifier {
   Future<void> _getRestaurant() async {
     try {
       _state = ResultState.loading;
-      notifyListeners();
-
-      final connectionServices = ConnectionServices();
-
-      /// Check for connectivity
-      if (!(await connectionServices.isInternetAvailable())) {
-        /// No internet connection
-        _handleNoConnection();
-        return;
-      }
 
       final restaurantResult = await restaurantServices.getAllRestaurants();
 
@@ -50,7 +40,7 @@ class RestaurantProvider extends ChangeNotifier {
       }
     } catch (e) {
       _state = ResultState.error;
-      _message = 'Failed to load restaurant check your connection';
+      _message = 'Failed to load restaurant. Check your connection.';
     } finally {
       notifyListeners();
     }

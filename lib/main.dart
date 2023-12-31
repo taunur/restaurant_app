@@ -28,6 +28,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'pages/details_page.dart';
+import 'package:http/http.dart' as http;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -41,7 +42,7 @@ void main() async {
       ?.requestPermission();
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-  RestaurantServices restaurantServices = RestaurantServices();
+  RestaurantServices restaurantServices = RestaurantServices(http.Client());
 
   final NotificationHelper notificationHelper = NotificationHelper();
   final BackgroundService service = BackgroundService();
