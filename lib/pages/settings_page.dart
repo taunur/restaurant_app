@@ -50,14 +50,14 @@ Widget _buildList(BuildContext context) {
       ),
       Material(
         child: ListTile(
-          title: const Text('Scheduling News'),
+          title: const Text('Scheduling Restaurant'),
           trailing: Consumer<SchedulingProvider>(
             builder: (context, scheduled, _) {
               return Switch.adaptive(
-                value: preferenceProvider.isDailyNewsActive,
+                value: preferenceProvider.isDailyRestaurantActive,
                 onChanged: (value) {
-                  scheduled.scheduledNews(value);
-                  preferenceProvider.enableDailyNews(value);
+                  scheduled.scheduledRestaurant(value);
+                  preferenceProvider.enableDailyRestaurant(value);
                 },
               );
             },

@@ -41,7 +41,7 @@ class NotificationHelper {
       SearchResult result) async {
     var channelId = "1";
     var channelName = "taunur";
-    var channelDescription = "restaurant news channel";
+    var channelDescription = "daily restaurant channel";
 
     /// get restaurant List
     var restaurantList =
@@ -68,7 +68,7 @@ class NotificationHelper {
     var titleRestaurant = selectedRestaurant.name;
 
     await flutterLocalNotificationsPlugin.show(
-      0,
+      1,
       titleNotification,
       titleRestaurant,
       platformChannelSpecifics,

@@ -4,19 +4,19 @@ import 'package:restaurant_app/data/utils/preferences_helper.dart';
 class PreferencesProvider extends ChangeNotifier {
   PreferencesHelper preferencesHelper;
   PreferencesProvider({required this.preferencesHelper}) {
-    _getDailyNewsPreferences();
+    _getDailyRestaurantPreferences();
   }
 
-  bool _isDailyNewsActive = false;
-  bool get isDailyNewsActive => _isDailyNewsActive;
+  bool _isDailyRestaurantActive = false;
+  bool get isDailyRestaurantActive => _isDailyRestaurantActive;
 
-  void _getDailyNewsPreferences() async {
-    _isDailyNewsActive = await preferencesHelper.isDailyNewsActive;
+  void _getDailyRestaurantPreferences() async {
+    _isDailyRestaurantActive = await preferencesHelper.isDailyRestaurantActive;
     notifyListeners();
   }
 
-  void enableDailyNews(bool value) {
-    preferencesHelper.setDailyNews(value);
-    _getDailyNewsPreferences();
+  void enableDailyRestaurant(bool value) {
+    preferencesHelper.setDailyRestaurant(value);
+    _getDailyRestaurantPreferences();
   }
 }

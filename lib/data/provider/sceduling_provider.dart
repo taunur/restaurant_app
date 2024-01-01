@@ -10,17 +10,16 @@ class SchedulingProvider extends ChangeNotifier {
 
   bool get isScheduled => _isScheduled;
 
-  Future<bool> scheduledNews(bool value) async {
+  Future<bool> scheduledRestaurant(bool value) async {
     _isScheduled = value;
     if (_isScheduled) {
       log('Scheduling News Activated');
       log('Scheduling News ${DateTimeHelper.format()}');
       notifyListeners();
-      return await AndroidAlarmManager.periodic(
-        const Duration(seconds: 1),
+      return await AndroidAlarmManager.oneShotAt(
+        DateTimeHelper.format(),
         1,
         BackgroundService.callback,
-        startAt: DateTimeHelper.format(),
         exact: true,
         wakeup: true,
       );
