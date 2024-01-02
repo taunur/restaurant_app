@@ -28,10 +28,9 @@ class NotificationHelper {
     );
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String? payload) async {
-      if (payload != null) {
-        developer.log('notification payload: $payload');
-      }
+        onDidReceiveNotificationResponse: (NotificationResponse details) async {
+      final payload = details.payload;
+
       selectNotificationSubject.add(payload ?? 'empty payload');
     });
   }

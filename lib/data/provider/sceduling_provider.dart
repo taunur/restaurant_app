@@ -17,7 +17,6 @@ class SchedulingProvider extends ChangeNotifier {
       log('Scheduling News ${DateTimeHelper.format()}');
       notifyListeners();
       return await AndroidAlarmManager.periodic(
-        // const Duration(seconds: 1),
         const Duration(hours: 24),
         1,
         BackgroundService.callback,
