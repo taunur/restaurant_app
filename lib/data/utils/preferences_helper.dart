@@ -6,7 +6,7 @@ class PreferencesHelper {
   PreferencesHelper({required this.sharedPreferences});
 
   /// daily Restaurant
-  static const dailyRestaurant = 'DAILY_RESATAURANT';
+  static const dailyRestaurant = 'DAILY_RESTAURANT';
 
   Future<bool> get isDailyRestaurantActive async {
     final prefs = await sharedPreferences;

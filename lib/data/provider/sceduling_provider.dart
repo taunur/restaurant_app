@@ -16,10 +16,12 @@ class SchedulingProvider extends ChangeNotifier {
       log('Scheduling News Activated');
       log('Scheduling News ${DateTimeHelper.format()}');
       notifyListeners();
-      return await AndroidAlarmManager.oneShotAt(
-        DateTimeHelper.format(),
+      return await AndroidAlarmManager.periodic(
+        // const Duration(seconds: 1),
+        const Duration(hours: 24),
         1,
         BackgroundService.callback,
+        startAt: DateTimeHelper.format(),
         exact: true,
         wakeup: true,
       );
