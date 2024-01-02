@@ -22,6 +22,7 @@ void main() {
     mockConnectionServices = MockConnectionServices();
     restaurantProvider = RestaurantProvider(
       restaurantServices: mockRestaurantServices,
+      connectionServices: mockConnectionServices,
     )..addListener(() {
         listenCount++;
       });
@@ -52,7 +53,24 @@ void main() {
     // assert
     expect(restaurantProvider.state, equals(ResultState.hasData));
     expect(restaurantProvider.allRestaurants, equals(restaurants));
-    expect(listenCount, equals(1));
+    expect(listenCount, equals(2));
+    verify(mockRestaurantServices.getAllRestaurants());
+  });
+
+  test('empty data updates state to noData', () async {
+    // arrange
+    when(mockConnectionServices.isInternetAvailable())
+        .thenAnswer((_) async => true);
+    when(mockRestaurantServices.getAllRestaurants())
+        .thenAnswer((_) async => []);
+
+    // act
+    await restaurantProvider.getRestaurant();
+
+    // assert
+    expect(restaurantProvider.state, equals(ResultState.noData));
+    expect(restaurantProvider.message, equals('Empty Data'));
+    expect(listenCount, equals(2));
     verify(mockRestaurantServices.getAllRestaurants());
   });
 
@@ -65,7 +83,88 @@ void main() {
     await restaurantProvider.getRestaurant();
     // assert
     expect(restaurantProvider.state, equals(ResultState.error));
-    expect(listenCount, equals(1));
-    verify(mockRestaurantServices.getAllRestaurants());
+    expect(listenCount, equals(3));
+    verifyNever(mockRestaurantServices.getAllRestaurants());
+    verifyNoMoreInteractions(mockRestaurantServices);
+  });
+
+  test('should change state to hasData when search result is not empty',
+      () async {
+    // arrange
+    const query = 'Melting Pot';
+    final searchResult = SearchResult(
+      founded: 1,
+      restaurants: [
+        Restaurant(
+          id: 'rqdv5juczeskfw1e867',
+          name: 'Melting Pot',
+          description: 'Lorem ipsum...',
+          pictureId: '14',
+          city: 'Medan',
+          rating: 4.2,
+        ),
+      ],
+      error: false,
+    );
+
+    when(mockConnectionServices.isInternetAvailable())
+        .thenAnswer((_) async => true);
+    when(mockRestaurantServices.getSearch(query))
+        .thenAnswer((_) async => searchResult);
+
+    // act
+    await restaurantProvider.search(query);
+
+    // assert
+    expect(restaurantProvider.state, equals(ResultState.hasData));
+    expect(restaurantProvider.result, equals(searchResult));
+    expect(listenCount, equals(2));
+    verify(mockRestaurantServices.getSearch(query));
+  });
+
+  test('should change state to noData when search result is empty', () async {
+    // arrange
+    const query = 'Nonexistent Restaurant';
+    final emptySearchResult =
+        SearchResult(founded: 0, restaurants: [], error: true);
+
+    when(mockConnectionServices.isInternetAvailable())
+        .thenAnswer((_) async => true);
+    when(mockRestaurantServices.getSearch(query))
+        .thenAnswer((_) async => emptySearchResult);
+
+    // act
+    await restaurantProvider.search(query);
+
+    // assert
+    expect(restaurantProvider.state, equals(ResultState.noData));
+    expect(restaurantProvider.message,
+        equals('No restaurant name found: "$query"'));
+    expect(listenCount, equals(2));
+    verify(mockRestaurantServices.getSearch(query));
+  });
+
+  test('should change state to error when search throws an exception',
+      () async {
+    // arrange
+    const query = 'Melting Pot';
+
+    when(mockConnectionServices.isInternetAvailable())
+        .thenAnswer((_) async => true);
+    when(mockRestaurantServices.getSearch(query)).thenThrow(Error());
+
+    // act
+    await restaurantProvider.search(query);
+
+    // assert
+    expect(restaurantProvider.state, equals(ResultState.error));
+    expect(restaurantProvider.message,
+        equals('Failed to load restaurant check your connection'));
+    expect(listenCount, equals(2));
+
+    // verify the expected call
+    verify(mockRestaurantServices.getSearch(query)).called(1);
+    verifyNoMoreInteractions(
+        mockRestaurantServices); // ensure no other unexpected calls
   });
 }

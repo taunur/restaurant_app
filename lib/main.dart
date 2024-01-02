@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/app_routes.dart';
+import 'package:restaurant_app/data/api/connection_services.dart';
 import 'package:restaurant_app/data/api/restaurant_services.dart';
 import 'package:restaurant_app/data/db/db_resto_helper.dart';
 import 'package:restaurant_app/data/provider/db_resto_provider.dart';
@@ -43,6 +44,7 @@ void main() async {
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   RestaurantServices restaurantServices = RestaurantServices(http.Client());
+  ConnectionServices connectionServices = ConnectionServices();
 
   final NotificationHelper notificationHelper = NotificationHelper();
   final BackgroundService service = BackgroundService();
@@ -65,6 +67,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => RestaurantProvider(
             restaurantServices: restaurantServices,
+            connectionServices: connectionServices,
           ),
         ),
         ChangeNotifierProvider(
@@ -83,6 +86,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => DatabaseRestoProvider(
             databaseHelper: DatabaseRestoHelper(),
+            connectionServices: connectionServices,
           ),
         ),
       ],

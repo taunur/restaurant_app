@@ -7,8 +7,12 @@ import 'package:restaurant_app/data/utils/result_state.dart';
 
 class DatabaseRestoProvider extends ChangeNotifier {
   final DatabaseRestoHelper databaseHelper;
+  final ConnectionServices connectionServices;
 
-  DatabaseRestoProvider({required this.databaseHelper}) {
+  DatabaseRestoProvider({
+    required this.databaseHelper,
+    required this.connectionServices,
+  }) {
     _getBookmarks();
   }
 
@@ -27,11 +31,8 @@ class DatabaseRestoProvider extends ChangeNotifier {
     _message = '';
     notifyListeners();
 
-    final connectionServices = ConnectionServices();
-
     /// Check for connectivity
     if (!(await connectionServices.isInternetAvailable())) {
-      /// No internet connection
       _handleNoConnection();
       return;
     }

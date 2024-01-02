@@ -6,10 +6,14 @@ import 'package:restaurant_app/data/utils/result_state.dart';
 
 class RestaurantProvider extends ChangeNotifier {
   final RestaurantServices restaurantServices;
+  final ConnectionServices connectionServices;
+
   ResultState _state = ResultState.noData;
 
-  RestaurantProvider({required this.restaurantServices}) {
-    /// Initialize and update restaurant data in the constructor
+  RestaurantProvider({
+    required this.restaurantServices,
+    required this.connectionServices,
+  }) {
     _getRestaurant();
   }
 
@@ -31,12 +35,9 @@ class RestaurantProvider extends ChangeNotifier {
       _message = '';
       notifyListeners();
 
-      final connectionServices = ConnectionServices();
-
-      /// Check for connectivity
+      // Check for connectivity
       if (!(await connectionServices.isInternetAvailable())) {
-        /// No internet connection
-        _handleNoConnection();
+        await _handleNoConnection();
         return;
       }
 
@@ -73,12 +74,9 @@ class RestaurantProvider extends ChangeNotifier {
       _message = '';
       notifyListeners();
 
-      final connectionServices = ConnectionServices();
-
-      /// Check for connectivity
+      // Check for connectivity
       if (!(await connectionServices.isInternetAvailable())) {
-        /// No internet connection
-        _handleNoConnection();
+        await _handleNoConnection();
         return;
       }
 
