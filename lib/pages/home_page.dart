@@ -225,18 +225,14 @@ class _HomePageState extends State<HomePage> {
                                   return isBookmarked
                                       ? IconButton(
                                           icon: const Icon(Icons.bookmark),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: Colors.white,
                                           onPressed: () => provider
                                               .removeBookmark(restaurant.id),
                                         )
                                       : IconButton(
                                           icon:
                                               const Icon(Icons.bookmark_border),
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
+                                          color: Colors.white,
                                           onPressed: () => provider
                                               .addBookmarkHome(restaurant),
                                         );
