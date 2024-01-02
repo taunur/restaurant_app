@@ -5,7 +5,6 @@ import 'package:restaurant_app/common/app_fonts.dart';
 import 'package:restaurant_app/data/provider/details_provider.dart';
 import 'package:restaurant_app/data/utils/image_helpers.dart';
 import 'package:restaurant_app/data/utils/result_state.dart';
-import 'package:restaurant_app/pages/no_connection.dart';
 import 'package:restaurant_app/widgets/error_widget.dart';
 import 'package:restaurant_app/widgets/loading_widget.dart';
 
@@ -43,17 +42,9 @@ class DetailsPage extends StatelessWidget {
                 detailRestoProvider.detailResto!.restaurantInfo,
               );
             case ResultState.error:
-
-              /// Display an error message
-              if (detailRestoProvider.errorMessage ==
-                  'No internet connection') {
-                return const Center(
-                  child: NoConnectionPage(),
-                );
-              } else {
-                return ErrorMessageWidget(
-                    message: detailRestoProvider.errorMessage);
-              }
+              return ErrorMessageWidget(
+                message: detailRestoProvider.errorMessage,
+              );
             default:
               return const Text('Unexpected state');
           }

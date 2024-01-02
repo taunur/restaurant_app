@@ -107,7 +107,12 @@ class _HomePageState extends State<HomePage> {
               return ErrorMessageWidget(message: state.message);
             } else if (state.state == ResultState.error) {
               if (state.message == 'No internet connection') {
-                return const NoConnectionPage();
+                return NoConnectionPage(
+                  onReload: () {
+                    Provider.of<RestaurantProvider>(context, listen: false)
+                        .refresh();
+                  },
+                );
               } else {
                 return ErrorMessageWidget(message: state.message);
               }

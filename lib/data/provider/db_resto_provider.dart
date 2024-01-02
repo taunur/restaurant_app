@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:restaurant_app/data/api/connection_services.dart';
 import 'package:restaurant_app/data/db/db_resto_helper.dart';
 import 'package:restaurant_app/data/models/restaurant_model.dart';
 
@@ -21,7 +22,20 @@ class DatabaseRestoProvider extends ChangeNotifier {
   List<Restaurant> get bookmarks => _bookmarks;
 
   /// mendapatkan data bookmark dari database
-  void _getBookmarks() async {
+  Future<void> _getBookmarks() async {
+    _state = ResultState.loading;
+    _message = '';
+    notifyListeners();
+
+    final connectionServices = ConnectionServices();
+
+    /// Check for connectivity
+    if (!(await connectionServices.isInternetAvailable())) {
+      /// No internet connection
+      _handleNoConnection();
+      return;
+    }
+
     _bookmarks = await databaseHelper.getBookmarksResto();
     if (_bookmarks.isNotEmpty) {
       _state = ResultState.hasData;
@@ -33,7 +47,7 @@ class DatabaseRestoProvider extends ChangeNotifier {
   }
 
   /// menambahkan bookmark
-  void addBookmarkHome(Restaurant restaurant) async {
+  Future<void> addBookmarkHome(Restaurant restaurant) async {
     try {
       await databaseHelper.insertBookmarkResto(restaurant);
       _getBookmarks();
@@ -49,7 +63,7 @@ class DatabaseRestoProvider extends ChangeNotifier {
     return bookmarkedArticle.isNotEmpty;
   }
 
-  void removeBookmark(String id) async {
+  Future<void> removeBookmark(String id) async {
     try {
       await databaseHelper.removeBookmark(id);
       _getBookmarks();
@@ -58,5 +72,19 @@ class DatabaseRestoProvider extends ChangeNotifier {
       _message = 'Error: $e';
       notifyListeners();
     }
+  }
+
+  Future<void> refresh() async {
+    await _getBookmarks();
+  }
+
+  Future<void> _handleNoConnection() async {
+    _state = ResultState.error;
+    _message = 'No internet connection';
+    notifyListeners();
+  }
+
+  Future<void> handleNoConnection() async {
+    await _handleNoConnection();
   }
 }

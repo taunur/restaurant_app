@@ -25,6 +25,9 @@ class CardRestaurant extends StatelessWidget {
                   restaurant.pictureId,
                   ImageResolution.small,
                 ),
+                errorBuilder: (ctx, error, _) => const Center(
+                  child: Icon(Icons.error),
+                ),
               ),
             ),
             title: Text(

@@ -107,8 +107,13 @@ class RestaurantListWidget extends StatelessWidget {
             return ErrorMessageWidget(message: search.message);
           case ResultState.error:
             if (search.message == 'No internet connection') {
-              return const Center(
-                child: NoConnectionPage(),
+              return Center(
+                child: NoConnectionPage(
+                  onReload: () {
+                    Provider.of<RestaurantProvider>(context, listen: false)
+                        .refresh();
+                  },
+                ),
               );
             } else {
               return ErrorMessageWidget(message: search.message);
