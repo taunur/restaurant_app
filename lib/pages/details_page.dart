@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/app_color.dart';
 import 'package:restaurant_app/common/app_fonts.dart';
 import 'package:restaurant_app/data/provider/details_provider.dart';
+import 'package:restaurant_app/data/provider/review_provider.dart';
 import 'package:restaurant_app/data/utils/image_helpers.dart';
 import 'package:restaurant_app/data/utils/result_state.dart';
 import 'package:restaurant_app/widgets/error_widget.dart';
@@ -10,20 +13,39 @@ import 'package:restaurant_app/widgets/loading_widget.dart';
 
 import '../data/models/detail_resto_model.dart';
 
-class DetailsPage extends StatelessWidget {
+class DetailsPage extends StatefulWidget {
   const DetailsPage({Key? key}) : super(key: key);
+
+  @override
+  State<DetailsPage> createState() => _DetailsPageState();
+}
+
+class _DetailsPageState extends State<DetailsPage> {
+  /// add komentar
+  bool isAddingReview = false;
+  TextEditingController nameController = TextEditingController();
+  TextEditingController reviewController = TextEditingController();
+
+  /// id restaurant
+  String restaurantId = '';
 
   @override
   Widget build(BuildContext context) {
     /// get id
-    final String restaurantId =
-        ModalRoute.of(context)!.settings.arguments as String;
+    restaurantId = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as String;
+    log(restaurantId);
+
 
     /// enter id to provider
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DetailRestoProvider>(context, listen: false)
           .fetchDetailResto(restaurantId);
     });
+
+
     return Scaffold(
       appBar: _header(),
       body: Consumer<DetailRestoProvider>(
@@ -32,11 +54,11 @@ class DetailsPage extends StatelessWidget {
           switch (detailRestoProvider.state) {
             case ResultState.loading:
 
-              /// Display a loading indicator or placeholder
+            /// Display a loading indicator or placeholder
               return const Loading();
             case ResultState.hasData:
 
-              /// Display the data from the provider
+            /// Display the data from the provider
               return _buildDetails(
                 context,
                 detailRestoProvider.detailResto!.restaurantInfo,
@@ -180,16 +202,24 @@ class DetailsPage extends StatelessWidget {
               children: [
                 Text(
                   restaurant.name,
-                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '${restaurant.address}, ${restaurant.city}',
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontWeight: light,
-                      ),
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .bodySmall!
+                      .copyWith(
+                    fontWeight: light,
+                  ),
                 ),
               ],
             ),
@@ -223,12 +253,17 @@ class DetailsPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           /// menu Food
           Text(
             "Food Menu:",
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontWeight: semiBold,
-                ),
+            style: Theme
+                .of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(
+              fontWeight: semiBold,
+            ),
           ),
           _buildMenuList(menu.foods),
 
@@ -238,9 +273,13 @@ class DetailsPage extends StatelessWidget {
           ),
           Text(
             "Drink Menu:",
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  fontWeight: semiBold,
-                ),
+            style: Theme
+                .of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(
+              fontWeight: semiBold,
+            ),
           ),
           _buildMenuList(menu.drinks),
         ],
@@ -301,19 +340,43 @@ class DetailsPage extends StatelessWidget {
   }
 
   /// Customer Review
-  Widget _buildCustomerReviews(
-      BuildContext context, List<CustomerReview> customerReviews) {
+  Widget _buildCustomerReviews(BuildContext context,
+      List<CustomerReview> customerReviews) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "Customer Reviews:",
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Customer Reviews:",
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(
                   fontWeight: semiBold,
                 ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      AppColor.secondary),
+                ),
+                onPressed: () {
+                  _showAddReviewDialog(context);
+                },
+                child: Text('Add Review',
+                  style: whiteTextstyle.copyWith(
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ),
+            ],
           ),
+
           const SizedBox(height: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,16 +390,20 @@ class DetailsPage extends StatelessWidget {
   }
 
   /// Colum CustomerReview
-  Widget _buildSingleCustomerReview(
-      BuildContext context, CustomerReview review) {
+  Widget _buildSingleCustomerReview(BuildContext context,
+      CustomerReview review) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "${review.name} - ${review.date}",
-          style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: semiBold,
-              ),
+          style: Theme
+              .of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(
+            fontWeight: semiBold,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
@@ -346,5 +413,70 @@ class DetailsPage extends StatelessWidget {
         const SizedBox(height: 16),
       ],
     );
+  }
+
+  /// Add Form Reviews
+  void _showAddReviewDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add Review'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Your Name'),
+              ),
+              TextField(
+                controller: reviewController,
+                decoration: const InputDecoration(labelText: 'Your Review'),
+              ),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    AppColor.secondary),
+              ),
+              onPressed: () {
+                setState(() {
+                  _addReview(context);
+                });
+              },
+              child: Text(
+                'Add Review',
+                style: whiteTextstyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Function Button
+  void _addReview(BuildContext context) {
+    String name = nameController.text;
+    String review = reviewController.text;
+
+    if (name.isNotEmpty && review.isNotEmpty) {
+      Provider.of<ReviewProvider>(context, listen: false).addReview(
+          restaurantId, name, review);
+      nameController.text = '';
+      reviewController.text = '';
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Name and review cannot be empty'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

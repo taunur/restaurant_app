@@ -12,6 +12,7 @@ import 'package:restaurant_app/data/provider/db_resto_provider.dart';
 import 'package:restaurant_app/data/provider/details_provider.dart';
 import 'package:restaurant_app/data/provider/preferences_provider.dart';
 import 'package:restaurant_app/data/provider/restaurant_provider.dart';
+import 'package:restaurant_app/data/provider/review_provider.dart';
 import 'package:restaurant_app/data/provider/sceduling_provider.dart';
 import 'package:restaurant_app/data/provider/theme_provider.dart';
 import 'package:restaurant_app/data/utils/app_constants.dart';
@@ -88,6 +89,9 @@ void main() async {
             databaseHelper: DatabaseRestoHelper(),
             connectionServices: connectionServices,
           ),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ReviewProvider(),
         ),
       ],
       child: const MyApp(),
